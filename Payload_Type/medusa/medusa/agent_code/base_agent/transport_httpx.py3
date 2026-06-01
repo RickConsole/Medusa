@@ -123,7 +123,7 @@ import base64 as _b64
         self._httpx_init()
         config = self._httpx_get_config()
 
-        # Always prefer POST — GET routes return 404 on this deployment
+        # Always prefer POST -- GET routes return 404 on this deployment
         variation = config.get("post") or config.get("POST") or config.get("get") or config.get("GET")
         if not variation:
             return b""
@@ -157,7 +157,7 @@ import base64 as _b64
             body = transformed.encode('latin-1')
             client_headers["Content-Length"] = str(len(body))
         elif msg_location == "cookie":
-            # Do NOT URL-encode — base64/base64url chars are cookie-safe
+            # Do NOT URL-encode -- base64/base64url chars are cookie-safe
             client_headers["Cookie"] = msg_name + "=" + transformed
         elif msg_location == "query":
             url = url + "?" + msg_name + "=" + transformed
@@ -188,7 +188,7 @@ import base64 as _b64
             self._httpx_on_failure()
             return b""
 
-        # Reverse server transforms — result is the base64 Mythic message string
+        # Reverse server transforms -- result is the base64 Mythic message string
         resp_str = resp_body.decode('latin-1')
         decoded_str = self.reverseTransforms(resp_str, server_transforms)
 
