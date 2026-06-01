@@ -231,6 +231,8 @@ import base64 as _b64
         return False
 
 ### CONFIG ###
+            "Sleep": callback_interval,
+            "Jitter": callback_jitter,
             "HttpxConfig": """raw_c2_config""",
             "HttpxDomains": callback_domains,
             "HttpxRotation": "domain_rotation",
