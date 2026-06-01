@@ -18,8 +18,7 @@ import base64 as _b64
             self._httpx_failover = int(self.agent_config.get("HttpxFailoverThreshold") or 5)
         except (ValueError, TypeError):
             self._httpx_failover = 5
-        raw_front = self.agent_config.get("HttpxDomainFront", "")
-        self._httpx_front = "" if raw_front == "domain_front" else raw_front
+        self._httpx_front = self.agent_config.get("HttpxDomainFront", "")
         self._httpx_domain_index = 0
         self._httpx_fail_count = 0
         self._httpx_config = None
@@ -167,16 +166,16 @@ import base64 as _b64
         req = urllib.request.Request(url, body, client_headers, method=verb)
 
         # Proxy support
-        proxy_host = self.agent_config.get("ProxyHost", "")
-        proxy_port = self.agent_config.get("ProxyPort", "")
-        if proxy_host and proxy_port:
-            tls = "https" if proxy_host.startswith("https") else "http"
-            proxy_user = self.agent_config.get("ProxyUser", "")
-            proxy_pass = self.agent_config.get("ProxyPass", "")
-            if proxy_user and proxy_pass:
-                proxy_url = "{}://{}:{}@{}:{}".format(tls, proxy_user, proxy_pass, proxy_host.replace(tls + "://", ""), proxy_port)
+        _ph = self.agent_config.get("ProxyHost", "")
+        _pp = self.agent_config.get("ProxyPort", "")
+        if _ph and _pp:
+            tls = "https" if _ph.startswith("https") else "http"
+            _pu = self.agent_config.get("ProxyUser", "")
+            _pk = self.agent_config.get("ProxyPass", "")
+            if _pu and _pk:
+                proxy_url = "{}://{}:{}@{}:{}".format(tls, _pu, _pk, _ph.replace(tls + "://", ""), _pp)
             else:
-                proxy_url = "{}://{}:{}".format(tls, proxy_host.replace(tls + "://", ""), proxy_port)
+                proxy_url = "{}://{}:{}".format(tls, _ph.replace(tls + "://", ""), _pp)
             proxy_handler = urllib.request.ProxyHandler({tls: proxy_url})
             opener = urllib.request.build_opener(proxy_handler)
             urllib.request.install_opener(opener)
