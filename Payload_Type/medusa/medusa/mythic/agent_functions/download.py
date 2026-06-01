@@ -33,7 +33,7 @@ class DownloadArguments(TaskArguments):
             #     # this means we have tasking from the file browser rather than the popup UI
             #     # the medusa agent doesn't currently have the ability to do _remote_ listings, so we ignore it
             # filename = temp_json["path"] + "/" + temp_json["file"]
-            filename = temp_json["file"]
+            filename = temp_json.get("file", "")
             # else:
             #     raise Exception("Unsupported JSON")
         else:

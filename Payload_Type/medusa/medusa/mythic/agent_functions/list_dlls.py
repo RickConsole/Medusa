@@ -22,7 +22,7 @@ class ListDllsArguments(TaskArguments):
         if len(self.command_line) > 0:
             if self.command_line[0] == '{':
                 temp_json = json.loads(self.command_line)
-                self.add_arg("process_id", temp_json["process_id"])
+                self.add_arg("process_id", temp_json.get("process_id", ""))
             else:
                 self.add_arg("process_id", self.command_line)
         

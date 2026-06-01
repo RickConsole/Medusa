@@ -23,7 +23,7 @@ class ListTccArguments(TaskArguments):
         if len(self.command_line) > 0:
             if self.command_line[0] == '{':
                 temp_json = json.loads(self.command_line)
-                self.add_arg("db", temp_json["db"])
+                self.add_arg("db", temp_json.get("db", "/Library/Application Support/com.apple.TCC/TCC.db"))
             else:
                 self.add_arg("db", self.command_line)
         else:
