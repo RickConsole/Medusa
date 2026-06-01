@@ -20,7 +20,7 @@ class Medusa(PayloadType):
     note = "This payload uses Python to create a simple agent"
     supports_dynamic_loading = True
 
-    c2_profiles = ["http", "azure_blob"]
+    c2_profiles = ["http", "azure_blob", "httpx"]
 
     build_parameters = [
         BuildParameter(
@@ -213,6 +213,10 @@ class Medusa(PayloadType):
             "AESPSK": params.get("AESPSK", {}),
             "encrypted_exchange_check": params.get("encrypted_exchange_check", ""),
             "HEADER_PLACEHOLDER": params.get("headers", {}),
+            "callback_domains": params.get("callback_domains", []),
+            "domain_rotation": params.get("domain_rotation", "fail-over"),
+            "failover_threshold": params.get("failover_threshold", 5),
+            "domain_front": params.get("domain_front", ""),
         }
 
         for placeholder, value in replacements.items():
@@ -237,7 +241,7 @@ class Medusa(PayloadType):
             selected_c2 = None
             for c2 in self.c2info:
                 profile_name = c2.get_c2profile()["name"]
-                if profile_name in ["http", "azure_blob"]:
+                if profile_name in ["http", "azure_blob", "httpx"]:
                     selected_c2 = c2
                     break
 
@@ -249,6 +253,18 @@ class Medusa(PayloadType):
 
             profile_name = selected_c2.get_c2profile()["name"]
             base_code = self._get_base_code_for_profile(profile_name)
+
+            if profile_name == "httpx":
+                params = selected_c2.get_parameters_dict()
+                raw_config_id = params.get("raw_c2_config")
+                config_data = await SendMythicRPCFileGetContent(
+                    MythicRPCFileGetContentMessage(AgentFileId=raw_config_id)
+                )
+                if not config_data.Success:
+                    resp.build_stderr = config_data.Error
+                    resp.set_status(BuildStatus.Error)
+                    return resp
+                base_code = base_code.replace("raw_c2_config", config_data.Content.decode())
 
             if profile_name == "azure_blob":
                 params = selected_c2.get_parameters_dict()
